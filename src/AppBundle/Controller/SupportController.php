@@ -15,7 +15,9 @@ class SupportController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $form = $this->createForm(ContactFormType::class);
+        $form = $this->createForm(ContactFormType::class, null, [
+            'action' => $this->generateUrl('handle_form_submission'),
+        ]);
 
         return $this->render('support/index.html.twig', [
             'our_form' => $form->createView(),
@@ -26,6 +28,7 @@ class SupportController extends Controller
      * @param Request $request
      * @Route("/form-submission", name="handle_form_submission")
      * @Method("POST")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function handleFormSubmissionAction(Request $request)
     {
@@ -33,20 +36,28 @@ class SupportController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $ourFormData = $form->getData();
-
-            $message = \Swift_Message::newInstance()
-                ->setSubject('Contact Form Submission')
-                ->setFrom($form->getData()['from'])
-                ->setTo('srxoexyq@sharklasers.com')
-                ->setBody(
-                    $form->getData()['message'],
-                    'text/plain'
-                )
-            ;
-
-            $this->get('mailer')->send($message);
+        if ( ! $form->isSubmitted() || ! $form->isValid()) {
+            return $this->redirectToRoute('homepage');
         }
+
+        $data = $form->getData();
+
+        dump($data);
+
+        $message = \Swift_Message::newInstance()
+            ->setSubject('Contact Form Submission')
+            ->setFrom($data['from'])
+            ->setTo('srxoexyq@sharklasers.com')
+            ->setBody(
+                $form->getData()['message'],
+                'text/plain'
+            )
+        ;
+
+        $this->get('mailer')->send($message);
+
+        $this->addFlash('success', 'Your message was sent!');
+
+        return $this->redirectToRoute('homepage');
     }
 }
