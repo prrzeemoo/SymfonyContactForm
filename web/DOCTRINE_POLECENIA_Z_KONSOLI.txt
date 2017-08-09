@@ -1,0 +1,6 @@
+1. php bin/console doctrine:database:create
+
+2. php bin/console doctrine:generate:entity (utworzenie kolumn)
+
+3.
+
