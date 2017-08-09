@@ -16,4 +16,13 @@ class SecurityController extends Controller
 
         ]);
     }
+
+    /**
+     * @Route("/logout")
+     * @throws \RuntimeException
+     */
+    public function logoutAction()
+    {
+        throw new \RuntimeException('This should never be called directly');
+    }
 }
