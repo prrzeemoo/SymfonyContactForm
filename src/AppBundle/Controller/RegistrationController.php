@@ -8,6 +8,7 @@ use AppBundle\Form\Type\MemberType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class RegistrationController extends Controller
 {
@@ -40,6 +41,16 @@ class RegistrationController extends Controller
 
             $en->persist($member);
             $en->flush();
+
+            $token = new UsernamePasswordToken(
+                $member,
+                $password,
+                'main',
+                $member->getRoles()
+            );
+
+            $this->get('security.token_storage')->setToken($token);
+            $this->get('session')->set('_security_main', serialize($token));
 
             $this->addFlash('success', 'Twoje Konto Zostało Zarejestrowane');
 
