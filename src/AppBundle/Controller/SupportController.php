@@ -28,6 +28,7 @@ class SupportController extends Controller
      * @param Request $request
      * @Route("/form-submission", name="handle_form_submission")
      * @Method("POST")
+     * @throws \LogicException
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function handleFormSubmissionAction(Request $request)
